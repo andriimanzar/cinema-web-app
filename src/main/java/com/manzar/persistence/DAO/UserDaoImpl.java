@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.manzar.persistence.DAO.SQLQueries.*;
+import static com.manzar.persistence.DAO.SQLQueries.UserQuery.*;
 
 public class UserDaoImpl implements UserDao {
 
-    private static UserDaoImpl userDao;
+    private static UserDao userDao;
 
     private UserDaoImpl() {
 
     }
 
-    public static synchronized UserDaoImpl getInstance() {
+    public static synchronized UserDao getInstance() {
         if (userDao == null) {
             userDao = new UserDaoImpl();
         }
@@ -67,6 +67,7 @@ public class UserDaoImpl implements UserDao {
         insertStatement.setString(2, user.getLastName());
         insertStatement.setString(3, user.getEmail());
         insertStatement.setString(4, user.getPhoneNumber());
+        insertStatement.setString(5,user.getPassword());
     }
 
     @Override
@@ -100,6 +101,7 @@ public class UserDaoImpl implements UserDao {
         user.setEmail(resultSet.getString("email"));
         user.setPhoneNumber(resultSet.getString("phone_number"));
         user.setId(resultSet.getLong("id"));
+        user.setPassword(resultSet.getString("password"));
         return user;
     }
 
@@ -144,7 +146,7 @@ public class UserDaoImpl implements UserDao {
     }
 
     private void updateUser(User user, Connection connection) throws SQLException {
-        checkIdIsNotNull(user);
+        checkId(user.getId());
         PreparedStatement updateUserStatement = prepareUpdateStatement(user, connection);
         updateUserStatement.executeUpdate();
     }
@@ -154,7 +156,7 @@ public class UserDaoImpl implements UserDao {
         try {
             PreparedStatement updateStatement = connection.prepareStatement(UPDATE_USER_SQL);
             fillUserStatement(user, updateStatement);
-            updateStatement.setLong(5, user.getId());
+            updateStatement.setLong(6, user.getId());
             return updateStatement;
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot prepare update statement for user: %s", user));
@@ -162,34 +164,33 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public void remove(User user) {
-        Objects.requireNonNull(user);
+    public void remove(Long id) {
         try (Connection connection = DBConnector.getConnection()) {
-            removeUser(user, connection);
+            removeUser(id, connection);
         } catch (SQLException e) {
-            throw new DBException(String.format("Cannot remove user: %s", user), e);
+            throw new DBException(String.format("Cannot remove user with id: %d", id), e);
         }
     }
 
-    private void removeUser(User user, Connection connection) throws SQLException {
-        checkIdIsNotNull(user);
-        PreparedStatement removeStatement = prepareRemoveStatement(user, connection);
+    private void removeUser(Long id, Connection connection) throws SQLException {
+        checkId(id);
+        PreparedStatement removeStatement = prepareRemoveStatement(id, connection);
         removeStatement.executeUpdate();
     }
 
-    private PreparedStatement prepareRemoveStatement(User user, Connection connection) {
+    private PreparedStatement prepareRemoveStatement(Long id, Connection connection) {
         try {
             PreparedStatement removeStatement = connection.prepareStatement(DELETE_USER_SQL);
-            removeStatement.setLong(1, user.getId());
+            removeStatement.setLong(1, id);
             return removeStatement;
         } catch (SQLException e) {
-            throw new DBException(String.format("Cannot prepare remove statement for user: %s", user), e);
+            throw new DBException(String.format("Cannot prepare remove statement for user with id: %d", id), e);
         }
     }
 
-    private void checkIdIsNotNull(User user) {
-        if (user.getId() == null) {
-            throw new DBException("User id cannot be null");
+    private void checkId(Long id) {
+        if (id == null || id < 1L) {
+            throw new DBException("User id cannot be null or less than 1");
         }
     }
 }

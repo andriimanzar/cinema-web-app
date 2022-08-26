@@ -146,7 +146,7 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     private void updateMovie(Movie movie, Connection connection) throws SQLException {
-        checkIdIsNotNull(movie);
+        checkId(movie.getId());
         PreparedStatement updateStatement = prepareUpdateStatement(movie, connection);
         updateStatement.executeUpdate();
     }
@@ -164,34 +164,33 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     @Override
-    public void remove(Movie movie) {
-        Objects.requireNonNull(movie);
+    public void remove(Long id) {
         try (Connection connection = DBConnector.getConnection()) {
-            removeMovie(movie, connection);
+            removeMovie(id, connection);
         } catch (SQLException e) {
-            throw new DBException(String.format("Cannot remove movie: %s", movie), e);
+            throw new DBException(String.format("Cannot remove movie with id: %d", id), e);
         }
     }
 
-    private void removeMovie(Movie movie, Connection connection) throws SQLException {
-        checkIdIsNotNull(movie);
-        PreparedStatement removeStatement = prepareRemoveStatement(movie, connection);
+    private void removeMovie(Long id, Connection connection) throws SQLException {
+        checkId(id);
+        PreparedStatement removeStatement = prepareRemoveStatement(id, connection);
         removeStatement.executeUpdate();
     }
 
-    private PreparedStatement prepareRemoveStatement(Movie movie, Connection connection) {
+    private PreparedStatement prepareRemoveStatement(Long id, Connection connection) {
         try {
             PreparedStatement removeStatement = connection.prepareStatement(DELETE_MOVIE_SQL);
-            removeStatement.setLong(1, movie.getId());
+            removeStatement.setLong(1,id);
             return removeStatement;
         } catch (SQLException e) {
-            throw new DBException(String.format("Cannot prepare remove statement for movie: %s", movie), e);
+            throw new DBException(String.format("Cannot prepare remove statement for movie with id: %d", id), e);
         }
     }
 
-    private void checkIdIsNotNull(Movie movie) {
-        if (movie.getId() == null) {
-            throw new DBException("Movie id cannot be null");
+    private void checkId(Long id) {
+        if (id == null || id < 1) {
+            throw new DBException("Movie id cannot be null or less than 1");
         }
     }
 }

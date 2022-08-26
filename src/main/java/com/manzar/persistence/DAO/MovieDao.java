@@ -14,5 +14,5 @@ public interface MovieDao {
 
     void update(Movie movie);
 
-    void remove(Movie movie);
+    void remove(Long id);
 }

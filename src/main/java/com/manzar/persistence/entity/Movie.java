@@ -1,17 +1,14 @@
 package com.manzar.persistence.entity;
 
+import java.util.Objects;
+
 public class Movie {
 
     private Long id;
-
     private String title;
-
     private String genre;
-
     private Long duration;
-
     private String director;
-
     private int releaseYear;
 
     @Override
@@ -83,5 +80,18 @@ public class Movie {
 
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Movie movie = (Movie) o;
+        return Objects.equals(title, movie.title);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(title);
     }
 }

@@ -1,5 +1,7 @@
 package com.manzar.persistence.entity;
 
+import java.util.Objects;
+
 public class User {
 
     private Long id;
@@ -7,15 +9,17 @@ public class User {
     private String lastName;
     private String email;
     private String phoneNumber;
+    private String password;
 
-    public User(String firstName, String lastName, String email, String phoneNumber) {
+    public User() {
+    }
+
+    public User(String firstName, String lastName, String email, String phoneNumber, String password) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-    }
-
-    public User() {
+        this.password = password;
     }
 
     public Long getId() {
@@ -58,6 +62,14 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -67,5 +79,18 @@ public class User {
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return Objects.equals(email, user.email);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(email);
     }
 }
