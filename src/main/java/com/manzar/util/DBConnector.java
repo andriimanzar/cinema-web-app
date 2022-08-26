@@ -11,12 +11,13 @@ import java.util.Properties;
 
 public class DBConnector {
 
-    public static final String SETTINGS_FILE = "application.properties";
+    public static final String SETTINGS_FILE = "WEB-INF/application.properties";
 
     public static Connection getConnection() {
         try {
+            Class.forName("org.postgresql.Driver");
             return DriverManager.getConnection(dbUrl());
-        } catch (SQLException | IOException e) {
+        } catch (SQLException | ClassNotFoundException | IOException e) {
             throw new DBException("Cannot create connection to db", e);
         }
     }
