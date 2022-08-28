@@ -45,8 +45,7 @@ public class UserDaoImpl implements UserDao {
 
     private PreparedStatement prepareInsertStatement(User user, Connection connection) {
         try {
-            PreparedStatement insertStatement = connection.prepareStatement(INSERT_USER_SQL,
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement insertStatement = connection.prepareStatement(INSERT_USER_SQL, Statement.RETURN_GENERATED_KEYS);
             fillUserStatement(user, insertStatement);
             return insertStatement;
         } catch (SQLException e) {
@@ -67,7 +66,7 @@ public class UserDaoImpl implements UserDao {
         insertStatement.setString(2, user.getLastName());
         insertStatement.setString(3, user.getEmail());
         insertStatement.setString(4, user.getPhoneNumber());
-        insertStatement.setString(5,user.getPassword());
+        insertStatement.setString(5, user.getPassword());
     }
 
     @Override
@@ -134,6 +133,37 @@ public class UserDaoImpl implements UserDao {
             throw new DBException("Cannot prepare select by id statement");
         }
     }
+
+    @Override
+    public User findUserByEmail(String email) {
+        Objects.requireNonNull(email);
+        try (Connection connection = DBConnector.getConnection()) {
+            return findByEmail(email, connection);
+        } catch (SQLException e) {
+            throw new DBException(String.format("Cannot find user with email: %s", email));
+        }
+    }
+
+    private User findByEmail(String email, Connection connection) throws SQLException {
+        PreparedStatement selectByEmailStatement = prepareSelectByEmailStatement(email, connection);
+        ResultSet resultSet = selectByEmailStatement.executeQuery();
+        if (resultSet.next()) {
+            return parseRow(resultSet);
+        } else throw new DBException(String.format("User with email = %s does not exist", email));
+
+    }
+
+
+    private PreparedStatement prepareSelectByEmailStatement(String email, Connection connection) {
+        try {
+            PreparedStatement selectByIdStatement = connection.prepareStatement(SELECT_USER_BY_EMAIL_SQL);
+            selectByIdStatement.setString(1, email);
+            return selectByIdStatement;
+        } catch (SQLException e) {
+            throw new DBException("Cannot prepare select by email statement");
+        }
+    }
+
 
     @Override
     public void update(User user) {

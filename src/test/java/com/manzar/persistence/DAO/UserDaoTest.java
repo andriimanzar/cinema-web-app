@@ -84,6 +84,18 @@ public class UserDaoTest {
 
     @Test
     @Order(5)
+    @DisplayName("Find user by email")
+    void findUserByEmail() {
+        User generatedUser = generateUser();
+        String email = generatedUser.getEmail();
+        userDao.save(generatedUser);
+        User userFromDb = userDao.findUserByEmail(email);
+
+        assertEquals(generatedUser, userFromDb);
+    }
+
+    @Test
+    @Order(6)
     @DisplayName("Update a user")
     void updateUser() {
         User testUser = generateUser();
@@ -105,7 +117,7 @@ public class UserDaoTest {
     }
 
     @Test
-    @Order(6)
+    @Order(7)
     @DisplayName("update() throws an exception, when a user id is null")
     void updateNotStoredUser() {
         User notStoredUser = generateUser();
@@ -114,7 +126,7 @@ public class UserDaoTest {
     }
 
     @Test
-    @Order(7)
+    @Order(8)
     @DisplayName("update() throws an exception, when a user id is invalid")
     void updateUserWithInvalidId() {
         User invalidIdUser = generateUser();
@@ -126,7 +138,7 @@ public class UserDaoTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     @DisplayName("Remove a user")
     void removeUser() {
         User testUser = generateUser();
@@ -143,7 +155,7 @@ public class UserDaoTest {
     }
 
     @Test
-    @Order(9)
+    @Order(10)
     @DisplayName("remove() throws an exception, when a user id is null")
     void removeNotStoredUser() {
         User notStoredUser = generateUser();
@@ -152,7 +164,7 @@ public class UserDaoTest {
     }
 
     @Test
-    @Order(10)
+    @Order(11)
     @DisplayName("remove() throws an exception, when a user id is invalid")
     void removeUserWithInvalidId() {
         User invalidIdUser = generateUser();
@@ -179,7 +191,7 @@ public class UserDaoTest {
                 map(a -> generateUser()).collect(Collectors.toList());
     }
 
-    private void changeTargetUserFields(User target, User source){
+    private void changeTargetUserFields(User target, User source) {
         target.setFirstName(source.getFirstName());
         target.setLastName(source.getLastName());
         target.setEmail(source.getEmail());

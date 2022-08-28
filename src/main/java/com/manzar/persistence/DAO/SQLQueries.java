@@ -11,6 +11,8 @@ public class SQLQueries {
 
         public static final String SELECT_USER_BY_ID_SQL = "SELECT * from users WHERE id = ?";
 
+        public static final String SELECT_USER_BY_EMAIL_SQL = "SELECT * from users WHERE email = ?";
+
         public static final String UPDATE_USER_SQL = "UPDATE users SET first_name = ?, last_name = ?, " +
                 "email = ?, phone_number = ?, password = ? WHERE id = ?";
 
