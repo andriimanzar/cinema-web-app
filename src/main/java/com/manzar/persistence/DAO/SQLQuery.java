@@ -1,9 +1,10 @@
 package com.manzar.persistence.DAO;
 
-public class SQLQueries {
+public class SQLQuery {
 
 
     static class UserQuery {
+
         public static final String INSERT_USER_SQL = "INSERT INTO users" +
                 "(first_name, last_name, email, phone_number, password) VALUES(?,?,?,?,?)";
 
@@ -21,6 +22,7 @@ public class SQLQueries {
 
 
     static class MovieQuery {
+
         public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" +
                 "(title, genre, duration, director, release_year) VALUES(?,?,?,?,?)";
 

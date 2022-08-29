@@ -2,6 +2,7 @@ package com.manzar.persistence.DAO;
 
 import com.manzar.persistence.entity.User;
 import com.manzar.persistence.exception.DBException;
+import com.password4j.Password;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.junit.jupiter.api.*;
 
@@ -181,7 +182,8 @@ public class UserDaoTest {
         generatedUser.setLastName(RandomStringUtils.randomAlphabetic(10));
         generatedUser.setEmail(RandomStringUtils.randomAlphabetic(15) + "@gmail.com");
         generatedUser.setPhoneNumber("+" + RandomStringUtils.randomNumeric(10));
-        generatedUser.setPassword(RandomStringUtils.randomAlphabetic(32));
+        String generatedPassword = RandomStringUtils.randomAlphabetic(32);
+        generatedUser.setPassword(Password.hash(generatedPassword).withBcrypt().getResult());
         return generatedUser;
     }
 

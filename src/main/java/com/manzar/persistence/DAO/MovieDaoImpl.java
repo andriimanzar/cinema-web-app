@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.manzar.persistence.DAO.SQLQueries.MovieQuery.*;
+import static com.manzar.persistence.DAO.SQLQuery.MovieQuery.*;
 
 public class MovieDaoImpl implements MovieDao {
 
@@ -181,7 +181,7 @@ public class MovieDaoImpl implements MovieDao {
     private PreparedStatement prepareRemoveStatement(Long id, Connection connection) {
         try {
             PreparedStatement removeStatement = connection.prepareStatement(DELETE_MOVIE_SQL);
-            removeStatement.setLong(1,id);
+            removeStatement.setLong(1, id);
             return removeStatement;
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot prepare remove statement for movie with id: %d", id), e);

@@ -23,14 +23,6 @@ public class Movie {
                 '}';
     }
 
-    public Movie(String title, String genre, Long duration, String director, int releaseYear) {
-        this.title = title;
-        this.genre = genre;
-        this.duration = duration;
-        this.director = director;
-        this.releaseYear = releaseYear;
-    }
-
     public Movie() {
     }
 

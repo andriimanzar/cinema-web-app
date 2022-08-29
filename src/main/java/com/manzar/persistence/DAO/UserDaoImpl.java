@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.manzar.persistence.DAO.SQLQueries.UserQuery.*;
+import static com.manzar.persistence.DAO.SQLQuery.UserQuery.*;
 
 public class UserDaoImpl implements UserDao {
 
