@@ -10,7 +10,7 @@ public class BCryptUtil {
         return hash.getResult();
     }
 
-    public static boolean comparePasswords(String userProvidedPassword, String hashFromDb){
+    public static boolean comparePasswords(String userProvidedPassword, String hashFromDb) {
         return Password.check(userProvidedPassword, hashFromDb).withBcrypt();
     }
 }

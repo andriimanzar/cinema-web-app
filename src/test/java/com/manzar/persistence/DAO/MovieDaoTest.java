@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class MovieDaoTest {
@@ -22,7 +21,6 @@ public class MovieDaoTest {
 
     @BeforeAll
     static void globalSetUp() {
-
         movieDao = MovieDaoImpl.getInstance();
         random = new Random();
     }
@@ -173,7 +171,7 @@ public class MovieDaoTest {
 
         generatedMovie.setTitle(RandomStringUtils.randomAlphabetic(10));
         generatedMovie.setGenre(RandomStringUtils.randomAlphabetic(10));
-        generatedMovie.setDuration(random.nextLong(1000,2000));
+        generatedMovie.setDuration(random.nextLong(1000, 2000));
         generatedMovie.setDirector(RandomStringUtils.randomNumeric(10));
         generatedMovie.setReleaseYear(random.nextInt(1900, LocalDate.now().getYear()));
 
@@ -186,7 +184,7 @@ public class MovieDaoTest {
                 map(a -> generateMovie()).collect(Collectors.toList());
     }
 
-    private void changeTargetMovieFields(Movie target, Movie source){
+    private void changeTargetMovieFields(Movie target, Movie source) {
         target.setTitle(source.getTitle());
         target.setGenre(source.getGenre());
         target.setDuration(source.getDuration());

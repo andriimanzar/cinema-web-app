@@ -4,7 +4,8 @@ import com.manzar.persistence.DAO.UserDao;
 import com.manzar.persistence.DAO.UserDaoImpl;
 import com.manzar.persistence.entity.User;
 import com.manzar.util.BCryptUtil;
-
+import jakarta.servlet.RequestDispatcher;
+import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -29,19 +30,13 @@ public class RegisterServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        if(!req.getParameter("password").equals(req.getParameter("repeatedPassword"))) {
-            resp.sendRedirect("/register");
-
-
-        }
-        else {
-            User newUser = parseUserFromRequest(req);
-            userDao.save(newUser);
-        }
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+        ServletContext servletContext = getServletContext();
+        RequestDispatcher requestDispatcher = servletContext.getRequestDispatcher("/success");
+        requestDispatcher.forward(req, resp);
     }
 
-    private User parseUserFromRequest(HttpServletRequest req){
+    private User parseUserFromRequest(HttpServletRequest req) {
 
         String firstName = req.getParameter("firstName");
         String lastName = req.getParameter("lastName");

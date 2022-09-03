@@ -12,6 +12,9 @@
     <name>Cinema Maven Webapp</name>
     <url>http://maven.apache.org</url>
 
+
+
+
     <dependencies>
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -60,6 +63,21 @@
 
     </dependencies>
     <build>
+        <resources>
+        <resource>
+                <directory>{basedir}/src/main/resources</directory>
+                <excludes>
+                    <exclude>**/application.properties</exclude>
+                </excludes>
+            </resource>
+        </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>3.3.0</version>
+            </plugin>
+        </plugins>
         <finalName>Cinema</finalName>
     </build>
 </project>
