@@ -2,27 +2,27 @@ package com.manzar.validator;
 
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
-import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
 @WebFilter(filterName = "passwordValidationFilter", urlPatterns = "/success")
 public class PasswordValidator implements Filter {
 
+    public static final String PASSWORD_IS_INVALID =
+            "Password must contain at least 1 uppercase letter and 1 number";
+    public static final String PASSWORDS_ARE_NOT_EQUAL = "Password and repeated password is not equal";
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        HttpServletResponse httpServletResponse = (HttpServletResponse) servletResponse;
         String password = servletRequest.getParameter("password");
         String repeatedPassword = servletRequest.getParameter("repeatedPassword");
         if (!validatePassword(password)) {
-            // todo: type this to user
-           httpServletResponse.sendRedirect("/register");
-        }
-        else if (!password.equals(repeatedPassword)) {
-            // todo: type this to user
-            httpServletResponse.sendRedirect("/register");
-        }
-       else filterChain.doFilter(servletRequest, servletResponse);
+            ValidatorUtils.sendErrorMessageAndRedirect(servletRequest, servletResponse, PASSWORD_IS_INVALID);
+
+        } else if (!password.equals(repeatedPassword)) {
+            ValidatorUtils.sendErrorMessageAndRedirect(servletRequest, servletResponse, PASSWORDS_ARE_NOT_EQUAL);
+
+        } else filterChain.doFilter(servletRequest, servletResponse);
     }
 
     private boolean validatePassword(String password) {
