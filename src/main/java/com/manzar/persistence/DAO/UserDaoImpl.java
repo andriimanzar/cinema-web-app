@@ -9,9 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.manzar.persistence.DAO.SQLQuery.UserQuery.*;
-
 public class UserDaoImpl implements UserDao {
+
+    public static final String INSERT_USER_SQL = "INSERT INTO users" +
+            "(first_name, last_name, email, phone_number, password) VALUES(?,?,?,?,?)";
+
+    public static final String SELECT_ALL_USERS_SQL = "SELECT * from users";
+
+    public static final String SELECT_USER_BY_ID_SQL = "SELECT * from users WHERE id = ?";
+
+    public static final String SELECT_USER_BY_EMAIL_SQL = "SELECT * from users WHERE email = ?";
+
+    public static final String UPDATE_USER_SQL = "UPDATE users SET first_name = ?, last_name = ?, " +
+            "email = ?, phone_number = ?, password = ? WHERE id = ?";
+
+    public static final String DELETE_USER_SQL = "DELETE from users WHERE id = ?";
 
     private static UserDao userDao;
 
@@ -223,4 +235,5 @@ public class UserDaoImpl implements UserDao {
             throw new DBException("User id cannot be null or less than 1");
         }
     }
+
 }

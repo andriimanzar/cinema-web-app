@@ -9,9 +9,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.manzar.persistence.DAO.SQLQuery.MovieQuery.*;
-
 public class MovieDaoImpl implements MovieDao {
+
+    public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" +
+            "(title, genre, duration, director, release_year) VALUES(?,?,?,?,?)";
+
+    public static final String SELECT_ALL_MOVIES_SQL = "SELECT * from movies";
+
+    public static final String SELECT_MOVIE_BY_ID_SQL = "SELECT * from movies WHERE id = ?";
+
+    public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " +
+            "duration = ?, director = ?, release_year = ?  WHERE id = ?";
+
+    public static final String DELETE_MOVIE_SQL = "DELETE from movies WHERE id = ?";
 
     private static MovieDao movieDao;
 
