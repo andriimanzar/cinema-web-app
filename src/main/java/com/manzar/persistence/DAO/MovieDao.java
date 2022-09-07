@@ -10,6 +10,8 @@ public interface MovieDao {
 
     List<Movie> findAll();
 
+    List<Movie> findAllMoviesWithLimit(int offset, int pageSize);
+
     Movie findMovie(Long id);
 
     void update(Movie movie);

@@ -11,15 +11,15 @@ import java.util.Objects;
 
 public class MovieDaoImpl implements MovieDao {
 
-    public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" +
-            "(title, genre, duration, director, release_year) VALUES(?,?,?,?,?)";
+    public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" + "(title, genre, duration, director, release_year) VALUES(?,?,?,?,?)";
 
     public static final String SELECT_ALL_MOVIES_SQL = "SELECT * from movies";
 
+    public static final String SELECT_ALL_MOVIES_WITH_LIMIT = "SELECT * from movies LIMIT ? OFFSET ?";
+
     public static final String SELECT_MOVIE_BY_ID_SQL = "SELECT * from movies WHERE id = ?";
 
-    public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " +
-            "duration = ?, director = ?, release_year = ?  WHERE id = ?";
+    public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " + "duration = ?, director = ?, release_year = ?  WHERE id = ?";
 
     public static final String DELETE_MOVIE_SQL = "DELETE from movies WHERE id = ?";
 
@@ -55,8 +55,7 @@ public class MovieDaoImpl implements MovieDao {
 
     private PreparedStatement prepareInsertStatement(Movie movie, Connection connection) {
         try {
-            PreparedStatement insertStatement = connection.prepareStatement(INSERT_MOVIE_SQL,
-                    Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement insertStatement = connection.prepareStatement(INSERT_MOVIE_SQL, Statement.RETURN_GENERATED_KEYS);
             fillMovieStatement(movie, insertStatement);
             return insertStatement;
         } catch (SQLException e) {
@@ -113,6 +112,30 @@ public class MovieDaoImpl implements MovieDao {
         movie.setReleaseYear(resultSet.getInt("release_year"));
         movie.setId(resultSet.getLong("id"));
         return movie;
+    }
+
+    public List<Movie> findAllMoviesWithLimit(int offset, int pageSize) {
+        try (Connection connection = DBConnector.getConnection()) {
+            return getAllMoviesWithLimit(connection,offset,pageSize);
+        } catch (SQLException e) {
+            throw new DBException("Cannot find all movies with limit");
+        }
+    }
+
+    private List<Movie> getAllMoviesWithLimit(Connection connection, int offset, int pageSize)
+            throws SQLException {
+        PreparedStatement selectAllWithLimitStatement = prepareSelectAllWithLimitStatement(connection, offset, pageSize);
+        ResultSet resultSet = selectAllWithLimitStatement.executeQuery();
+        return collectToList(resultSet);
+
+    }
+
+    private PreparedStatement prepareSelectAllWithLimitStatement(Connection connection, int offset, int pageSize)
+            throws SQLException {
+        PreparedStatement selectAllWithLimitStatement = connection.prepareStatement(SELECT_ALL_MOVIES_WITH_LIMIT);
+        selectAllWithLimitStatement.setInt(1, offset);
+        selectAllWithLimitStatement.setInt(2, pageSize);
+        return selectAllWithLimitStatement;
     }
 
 
