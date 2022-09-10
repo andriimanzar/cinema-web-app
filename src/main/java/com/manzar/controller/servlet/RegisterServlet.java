@@ -1,7 +1,7 @@
 package com.manzar.controller.servlet;
 
 import com.manzar.persistence.DAO.UserDao;
-import com.manzar.persistence.DAO.UserDaoImpl;
+import com.manzar.persistence.DAO.impl.UserDaoImpl;
 import com.manzar.persistence.entity.User;
 import com.manzar.util.BCryptUtil;
 import jakarta.servlet.RequestDispatcher;

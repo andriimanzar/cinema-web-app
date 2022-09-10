@@ -17,7 +17,6 @@ public class ValidatorUtils {
 
         HttpSession session = httpServletRequest.getSession();
         session.setAttribute("errorMessage", errorMessage);
-        httpServletResponse.setHeader("Cache-Control", "no-cache");
         httpServletResponse.sendRedirect("/register");
     }
 }
