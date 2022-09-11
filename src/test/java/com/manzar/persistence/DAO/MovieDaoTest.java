@@ -1,5 +1,6 @@
 package com.manzar.persistence.DAO;
 
+import com.manzar.persistence.DAO.impl.MovieDaoImpl;
 import com.manzar.persistence.entity.Movie;
 import com.manzar.persistence.exception.DBException;
 import org.apache.commons.lang3.RandomStringUtils;

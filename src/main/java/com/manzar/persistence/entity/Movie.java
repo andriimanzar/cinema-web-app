@@ -10,20 +10,24 @@ public class Movie {
     private Long duration;
     private String director;
     private int releaseYear;
+    private String imageURL;
+    private String trailerURL;
 
     @Override
     public String toString() {
-        return "Movie{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", genre='" + genre + '\'' +
-                ", duration=" + duration +
-                ", director='" + director + '\'' +
-                ", releaseYear=" + releaseYear +
-                '}';
+        return "Movie{" + "id=" + id + ", title='" + title + '\'' + ", genre='" + genre + '\'' + ", duration=" + duration + ", director='" + director + '\'' + ", releaseYear=" + releaseYear + ", imageURL='" + imageURL + '\'' + ", trailerURL='" + trailerURL + '\'' + '}';
     }
 
     public Movie() {
+    }
+    public Movie(String title, String genre, Long duration, String director, int releaseYear, String imageURL, String trailerURL) {
+        this.title = title;
+        this.genre = genre;
+        this.duration = duration;
+        this.director = director;
+        this.releaseYear = releaseYear;
+        this.imageURL = imageURL;
+        this.trailerURL = trailerURL;
     }
 
     public Long getId() {
@@ -73,6 +77,23 @@ public class Movie {
     public void setReleaseYear(int releaseYear) {
         this.releaseYear = releaseYear;
     }
+
+    public String getImageURL() {
+        return imageURL;
+    }
+
+    public void setImageURL(String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getTrailerURL() {
+        return trailerURL;
+    }
+
+    public void setTrailerURL(String trailerURL) {
+        this.trailerURL = trailerURL;
+    }
+
 
     @Override
     public boolean equals(Object o) {

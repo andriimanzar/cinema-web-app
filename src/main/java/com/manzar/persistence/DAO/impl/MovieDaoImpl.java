@@ -1,5 +1,6 @@
-package com.manzar.persistence.DAO;
+package com.manzar.persistence.DAO.impl;
 
+import com.manzar.persistence.DAO.MovieDao;
 import com.manzar.persistence.entity.Movie;
 import com.manzar.persistence.exception.DBException;
 import com.manzar.util.DBConnector;
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 public class MovieDaoImpl implements MovieDao {
 
-    public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" + "(title, genre, duration, director, release_year) VALUES(?,?,?,?,?)";
+    public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" + "(title, genre, duration, director, release_year, imageURL) VALUES(?,?,?,?,?,?,?)";
 
     public static final String SELECT_ALL_MOVIES_SQL = "SELECT * from movies";
 
@@ -22,6 +23,8 @@ public class MovieDaoImpl implements MovieDao {
     public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " + "duration = ?, director = ?, release_year = ?  WHERE id = ?";
 
     public static final String DELETE_MOVIE_SQL = "DELETE from movies WHERE id = ?";
+
+    public static final String COUNT_ROWS_SQL = "SELECT count(*) from movies";
 
     private static MovieDao movieDao;
 
@@ -77,6 +80,8 @@ public class MovieDaoImpl implements MovieDao {
         insertStatement.setLong(3, movie.getDuration());
         insertStatement.setString(4, movie.getDirector());
         insertStatement.setInt(5, movie.getReleaseYear());
+        insertStatement.setString(6, movie.getImageURL());
+        insertStatement.setString(7, movie.getTrailerURL());
     }
 
     @Override
@@ -110,31 +115,33 @@ public class MovieDaoImpl implements MovieDao {
         movie.setDuration(resultSet.getLong("duration"));
         movie.setDirector(resultSet.getString("director"));
         movie.setReleaseYear(resultSet.getInt("release_year"));
+        movie.setImageURL(resultSet.getString("imageURL"));
+        movie.setTrailerURL(resultSet.getString("trailerURL"));
         movie.setId(resultSet.getLong("id"));
         return movie;
     }
 
-    public List<Movie> findAllMoviesWithLimit(int offset, int pageSize) {
+    public List<Movie> findAllMoviesWithLimit(int pageSize, int offset) {
         try (Connection connection = DBConnector.getConnection()) {
-            return getAllMoviesWithLimit(connection,offset,pageSize);
+            return getAllMoviesWithLimit(connection, pageSize, offset);
         } catch (SQLException e) {
             throw new DBException("Cannot find all movies with limit");
         }
     }
 
-    private List<Movie> getAllMoviesWithLimit(Connection connection, int offset, int pageSize)
+    private List<Movie> getAllMoviesWithLimit(Connection connection, int pageSize, int offset)
             throws SQLException {
-        PreparedStatement selectAllWithLimitStatement = prepareSelectAllWithLimitStatement(connection, offset, pageSize);
+        PreparedStatement selectAllWithLimitStatement = prepareSelectAllWithLimitStatement(connection, pageSize, offset);
         ResultSet resultSet = selectAllWithLimitStatement.executeQuery();
         return collectToList(resultSet);
 
     }
 
-    private PreparedStatement prepareSelectAllWithLimitStatement(Connection connection, int offset, int pageSize)
+    private PreparedStatement prepareSelectAllWithLimitStatement(Connection connection, int pageSize, int offset)
             throws SQLException {
         PreparedStatement selectAllWithLimitStatement = connection.prepareStatement(SELECT_ALL_MOVIES_WITH_LIMIT);
-        selectAllWithLimitStatement.setInt(1, offset);
-        selectAllWithLimitStatement.setInt(2, pageSize);
+        selectAllWithLimitStatement.setInt(1, pageSize);
+        selectAllWithLimitStatement.setInt(2, offset);
         return selectAllWithLimitStatement;
     }
 
@@ -225,5 +232,21 @@ public class MovieDaoImpl implements MovieDao {
         if (id == null || id < 1) {
             throw new DBException("Movie id cannot be null or less than 1");
         }
+    }
+
+    public long countAllDatabaseRows() {
+        try (Connection connection = DBConnector.getConnection()) {
+            return executeAndParseCountStatement(connection);
+        } catch (SQLException e) {
+            throw new DBException("Cannot count database rows!");
+        }
+    }
+
+    private long executeAndParseCountStatement(Connection connection) throws SQLException {
+        Statement countStatement = connection.createStatement();
+        ResultSet resultSet = countStatement.executeQuery(COUNT_ROWS_SQL);
+        if (resultSet.next()) {
+            return resultSet.getLong("count");
+        } else throw new DBException("Cannot count database rows");
     }
 }

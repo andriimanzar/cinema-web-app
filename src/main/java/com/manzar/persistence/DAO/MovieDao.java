@@ -10,11 +10,13 @@ public interface MovieDao {
 
     List<Movie> findAll();
 
-    List<Movie> findAllMoviesWithLimit(int offset, int pageSize);
+    List<Movie> findAllMoviesWithLimit(int pageSize, int offset);
 
     Movie findMovie(Long id);
 
     void update(Movie movie);
 
     void remove(Long id);
+
+    long countAllDatabaseRows();
 }
