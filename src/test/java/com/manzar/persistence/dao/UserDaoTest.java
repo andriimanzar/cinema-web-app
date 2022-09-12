@@ -1,5 +1,6 @@
-package com.manzar.persistence.DAO;
+package com.manzar.persistence.dao;
 
+import com.manzar.persistence.dao.impl.UserDaoImpl;
 import com.manzar.persistence.entity.User;
 import com.manzar.persistence.exception.DBException;
 import com.password4j.Password;

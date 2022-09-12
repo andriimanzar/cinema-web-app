@@ -1,5 +1,6 @@
-package com.manzar.persistence.DAO;
+package com.manzar.persistence.dao.impl;
 
+import com.manzar.persistence.dao.UserDao;
 import com.manzar.persistence.entity.User;
 import com.manzar.persistence.exception.DBException;
 import com.manzar.util.DBConnector;

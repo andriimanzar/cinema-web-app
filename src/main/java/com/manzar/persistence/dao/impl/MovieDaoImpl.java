@@ -1,6 +1,6 @@
-package com.manzar.persistence.DAO.impl;
+package com.manzar.persistence.dao.impl;
 
-import com.manzar.persistence.DAO.MovieDao;
+import com.manzar.persistence.dao.MovieDao;
 import com.manzar.persistence.entity.Movie;
 import com.manzar.persistence.exception.DBException;
 import com.manzar.util.DBConnector;
