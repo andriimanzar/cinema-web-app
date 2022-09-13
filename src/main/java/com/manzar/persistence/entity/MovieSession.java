@@ -5,6 +5,7 @@ import java.util.Objects;
 
 public class MovieSession {
 
+    private Long id;
     private Long movieId;
     private LocalDateTime showTime;
 
@@ -32,6 +33,14 @@ public class MovieSession {
         this.showTime = showTime;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -47,9 +56,6 @@ public class MovieSession {
 
     @Override
     public String toString() {
-        return "MovieSession{" +
-                "movieId=" + movieId +
-                ", showTime=" + showTime +
-                '}';
+        return super.toString();
     }
 }
