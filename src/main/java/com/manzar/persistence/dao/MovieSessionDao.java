@@ -3,6 +3,7 @@ package com.manzar.persistence.dao;
 import com.manzar.persistence.entity.MovieSession;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 public interface MovieSessionDao {
@@ -18,5 +19,7 @@ public interface MovieSessionDao {
     MovieSession findByDateAndTime(LocalDateTime localDateTime);
 
     Map<MovieSession, String> findAllMovieSessions();
+
+    List<MovieSession> findClosestMovieSessions(Long movieId);
 
 }

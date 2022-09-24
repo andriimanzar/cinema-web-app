@@ -12,6 +12,8 @@ public interface MovieDao {
 
     List<Movie> findAllMoviesWithLimit(int pageSize, int offset);
 
+    List<Movie> findAllMoviesByGenre(String genre);
+
     Movie findMovie(Long id);
 
     void update(Movie movie);
@@ -19,4 +21,6 @@ public interface MovieDao {
     void remove(Long id);
 
     long countAllDatabaseRows();
+
+    List<String> findAllGenres();
 }

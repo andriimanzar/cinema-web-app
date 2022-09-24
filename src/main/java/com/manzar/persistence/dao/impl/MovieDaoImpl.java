@@ -1,9 +1,9 @@
 package com.manzar.persistence.dao.impl;
 
+import com.manzar.persistence.DBConnection;
 import com.manzar.persistence.dao.MovieDao;
 import com.manzar.persistence.entity.Movie;
 import com.manzar.persistence.exception.DBException;
-import com.manzar.util.DBConnector;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,18 +13,15 @@ import java.util.Objects;
 public class MovieDaoImpl implements MovieDao {
 
     public static final String INSERT_MOVIE_SQL = "INSERT INTO movies" + "(title, genre, duration, director, release_year, imageURL) VALUES(?,?,?,?,?,?,?)";
-
     public static final String SELECT_ALL_MOVIES_SQL = "SELECT * from movies";
-
     public static final String SELECT_ALL_MOVIES_WITH_LIMIT = "SELECT * from movies LIMIT ? OFFSET ?";
-
+    public static final String SELECT_ALL_MOVIES_WITH_CONCRETE_GENRE_SQL = "SELECT * from movies WHERE genre = ?";
     public static final String SELECT_MOVIE_BY_ID_SQL = "SELECT * from movies WHERE id = ?";
-
-    public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " + "duration = ?, director = ?, release_year = ?  WHERE id = ?";
-
+    public static final String UPDATE_MOVIE_SQL = "UPDATE movies SET title = ?, genre = ?, " + "duration = ?, director = ?, release_year = ?, imageURL = ?, trailerURL = ?  WHERE id = ?";
     public static final String DELETE_MOVIE_SQL = "DELETE from movies WHERE id = ?";
-
     public static final String COUNT_ROWS_SQL = "SELECT count(*) from movies";
+    public static final String FIND_ALL_GENRES = "SELECT distinct genre from movies";
+
 
     private static MovieDao movieDao;
 
@@ -42,7 +39,7 @@ public class MovieDaoImpl implements MovieDao {
     @Override
     public void save(Movie movie) {
         Objects.requireNonNull(movie);
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             saveMovie(movie, connection);
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot save movie: %s", movie), e);
@@ -86,7 +83,7 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public List<Movie> findAll() {
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             return getAllMovies(connection);
         } catch (SQLException e) {
             throw new DBException("Cannot find all movies");
@@ -122,7 +119,7 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     public List<Movie> findAllMoviesWithLimit(int pageSize, int offset) {
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             return getAllMoviesWithLimit(connection, pageSize, offset);
         } catch (SQLException e) {
             throw new DBException("Cannot find all movies with limit");
@@ -145,11 +142,32 @@ public class MovieDaoImpl implements MovieDao {
         return selectAllWithLimitStatement;
     }
 
+    @Override
+    public List<Movie> findAllMoviesByGenre(String genre) {
+        Objects.requireNonNull(genre);
+        try (Connection connection = DBConnection.getConnection()) {
+            return getAllMoviesByGenre(connection, genre);
+        } catch (SQLException e) {
+            throw new DBException(String.format("Cannot find all movies with genre %s", genre), e);
+        }
+    }
+
+    private List<Movie> getAllMoviesByGenre(Connection connection, String genre) throws SQLException {
+        PreparedStatement selectByGenreStatement = prepareSelectByGenreStatement(connection, genre);
+        ResultSet resultSet = selectByGenreStatement.executeQuery();
+        return collectToList(resultSet);
+    }
+
+    private PreparedStatement prepareSelectByGenreStatement(Connection connection, String genre) throws SQLException {
+        PreparedStatement selectByGenreStatement = connection.prepareStatement(SELECT_ALL_MOVIES_WITH_CONCRETE_GENRE_SQL);
+        selectByGenreStatement.setString(1, genre);
+        return selectByGenreStatement;
+    }
 
     @Override
     public Movie findMovie(Long id) {
         Objects.requireNonNull(id);
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             return findById(id, connection);
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot find movie with id: %d", id));
@@ -178,7 +196,7 @@ public class MovieDaoImpl implements MovieDao {
     @Override
     public void update(Movie movie) {
         Objects.requireNonNull(movie);
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             updateMovie(movie, connection);
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot update movie: %s", movie), e);
@@ -196,7 +214,7 @@ public class MovieDaoImpl implements MovieDao {
         try {
             PreparedStatement updateStatement = connection.prepareStatement(UPDATE_MOVIE_SQL);
             fillMovieStatement(movie, updateStatement);
-            updateStatement.setLong(6, movie.getId());
+            updateStatement.setLong(8, movie.getId());
             return updateStatement;
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot prepare update statement for movie: %s", movie));
@@ -205,7 +223,7 @@ public class MovieDaoImpl implements MovieDao {
 
     @Override
     public void remove(Long id) {
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             removeMovie(id, connection);
         } catch (SQLException e) {
             throw new DBException(String.format("Cannot remove movie with id: %d", id), e);
@@ -235,7 +253,7 @@ public class MovieDaoImpl implements MovieDao {
     }
 
     public long countAllDatabaseRows() {
-        try (Connection connection = DBConnector.getConnection()) {
+        try (Connection connection = DBConnection.getConnection()) {
             return executeAndParseCountStatement(connection);
         } catch (SQLException e) {
             throw new DBException("Cannot count database rows!");
@@ -249,4 +267,29 @@ public class MovieDaoImpl implements MovieDao {
             return resultSet.getLong("count");
         } else throw new DBException("Cannot count database rows");
     }
+
+    @Override
+    public List<String> findAllGenres() {
+        try (Connection connection = DBConnection.getConnection()) {
+           return findGenres(connection);
+        } catch (SQLException e) {
+            throw new DBException("Cannot find all genres");
+        }
+    }
+
+    private List<String> findGenres(Connection connection) throws SQLException {
+        Statement selectAllGenresStatement = connection.createStatement();
+        ResultSet resultSet = selectAllGenresStatement.executeQuery(FIND_ALL_GENRES);
+        return parseGenresResultSet(resultSet);
+    }
+
+    private List<String> parseGenresResultSet(ResultSet resultSet) throws SQLException {
+        List<String> genres = new ArrayList<>();
+        while (resultSet.next()) {
+            String genre = resultSet.getString("genre");
+            genres.add(genre);
+        }
+        return genres;
+    }
+
 }
